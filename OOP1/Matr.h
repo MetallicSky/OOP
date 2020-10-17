@@ -172,6 +172,14 @@ public:
 				temp.mat[i][j] *= scalar;
 		return temp;
 	}
+	Matrix operator / (T scalar) const
+	{
+		Matrix<T> temp(*this);
+		for (int i = 0; i < temp.rws; i++)
+			for (int j = 0; j < temp.cls; j++)
+				temp.mat[i][j] /= scalar;
+		return temp;
+	}
 };
 
 template<typename T>
