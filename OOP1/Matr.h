@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -57,7 +58,7 @@ public:
 	/// <summary>
 	/// ѕечатает матрицу в консоли
 	/// </summary>
-	void print();
+	string toString();
 
 	/// <summary>
 	/// «аполн€ет массив случайными значени€ми от одного до второго предела
@@ -243,14 +244,20 @@ Matrix<T>::~Matrix()
 }
 
 template<typename T>
-void Matrix<T>::print()
+string Matrix<T>::toString()
 {
-	for (int i = 0; i < rws; i++)
+	string output;
+	for (int i = 0; i < this->rws; i++)
 	{
-		for (int j = 0; j < cls; j++)
-			cout << mat[i][j] << " ";
-		cout << endl;
+		for (int j = 0; j < this->cls; j++)
+		{
+			output += to_string(this->mat[i][j]);
+			if (j != this->cls - 1)
+				output += " ";
+		}
+		output += "\n";
 	}
+	return output;
 }
 
 template<typename T>
