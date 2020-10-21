@@ -1,5 +1,7 @@
 ﻿#include "Matr.h"
 #include "Shapes.h"
+#include "Phonebook.h"
+
 #include "windows.h"
 #include <iostream>
 #include <conio.h>
@@ -61,7 +63,7 @@ int main()
 
 	// LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2
 
-	vector<Shape*> shapes;
+	/*vector<Shape*> shapes;
 	int minR = 0;
 	int maxR = 10;
 	for (int i = 0; i < 3; i++)
@@ -172,5 +174,9 @@ int main()
 	cout << typeid(*shapes[maxA]).name() << " " << maxA << ":\n";
 	cout << shapes[maxA]->toString();
 	cout << "P = " << shapes[maxA]->findPerim() << endl;
-	cout << "S = " << shapes[maxA]->findArea() << endl;
+	cout << "S = " << shapes[maxA]->findArea() << endl;*/
+
+	// LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3
+
+	Phonebook book;
 }
