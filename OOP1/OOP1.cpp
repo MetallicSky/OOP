@@ -179,4 +179,22 @@ int main()
 	// LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3
 
 	Phonebook book;
+	book.add("Aaron", "+7464341743", 1);
+	cout << book.find("Aa");
+	book[0]->addNumber("234523", 2);
+	book[0]->removeNumber("+7464341743");
+	cout << "added new number, removed the old one:" << endl;
+
+	cout << book.find("Aa");
+
+	book.add("Aalan", "484613", 2);
+	book.add("Ben");
+	book.add("Joseph", "*548#", 0);
+	book.add("Joe", "+746434234");
+	cout << "search: 46:" << endl;
+	cout << book.find("46");
+	book.remove(1);
+	book.remove(2);
+	cout << "after removal:" << endl;
+	cout << book.find("46");
 }
