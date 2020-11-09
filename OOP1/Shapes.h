@@ -147,3 +147,98 @@ public:
 		return a + b + c;
 	}
 };
+
+class ShapeCollector
+{
+	vector<Shape*> shapes;
+
+	Shape* minAreaShape;
+	Shape* maxAreaShape;
+	Shape* minPerimeterShape;
+	Shape* maxPerimeterShape;
+	float totalArea;
+	float totalPerimeter;
+
+public:
+	ShapeCollector()
+	{
+		minAreaShape = nullptr;
+		maxAreaShape = nullptr;
+		minPerimeterShape = nullptr;
+		maxPerimeterShape = nullptr;
+		totalArea = 0;
+		totalPerimeter = 0;
+	}
+
+	void add(Shape* shape)
+	{
+		shapes.push_back(shape);
+		totalArea += shape->findArea();
+		totalPerimeter += shape->findPerim();
+
+		if (shapes.size() == 1)
+		{
+			minAreaShape = shape;
+			maxAreaShape = shape;
+			minPerimeterShape = shape;
+			maxPerimeterShape = shape;
+			return;
+		}
+
+		if (minAreaShape->findArea() > shape->findArea())
+			minAreaShape = shape;
+		else if (maxAreaShape->findArea() < shape->findArea())
+			maxAreaShape = shape;
+
+		if (minPerimeterShape->findArea() > shape->findPerim())
+			minPerimeterShape = shape;
+		else if (maxPerimeterShape->findArea() < shape->findPerim())
+			maxPerimeterShape = shape;
+	}
+
+	void addAll(vector<Shape*> adding)
+	{
+		for (int i = 0; i < adding.size(); i++)
+			add(adding[i]);
+	}
+
+	Shape* getMaxAreaShape()
+	{
+		return maxAreaShape;
+	}
+
+	Shape* getMinAreaShape()
+	{
+		return minAreaShape;
+	}
+
+	Shape* getMaxPerimeterShape()
+	{
+		return maxPerimeterShape;
+	}
+
+	Shape* getMinPerimeterShape()
+	{
+		return minPerimeterShape;
+	}
+
+	float getTotalArea()
+	{
+		return totalArea;
+	}
+
+	float getTotalPerimeter()
+	{
+		return totalPerimeter;
+	}
+
+	int size()
+	{
+		return shapes.size();
+	}
+
+	Shape* operator [] (int i)
+	{
+		return shapes[i];
+	}
+};

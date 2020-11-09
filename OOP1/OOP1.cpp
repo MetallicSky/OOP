@@ -61,9 +61,9 @@ int main()
 	cout << "\ntest4 det = " << test4.determinant() << endl;
 	cout << endl;*/
 
-	// LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2 LAB2
+	// LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4
 
-	/*vector<Shape*> shapes;
+	vector<Shape*> shapes;
 	int minR = 0;
 	int maxR = 10;
 	for (int i = 0; i < 3; i++)
@@ -174,11 +174,29 @@ int main()
 	cout << typeid(*shapes[maxA]).name() << " " << maxA << ":\n";
 	cout << shapes[maxA]->toString();
 	cout << "P = " << shapes[maxA]->findPerim() << endl;
-	cout << "S = " << shapes[maxA]->findArea() << endl;*/
+	cout << "S = " << shapes[maxA]->findArea() << endl;
+
+	cout << "\n\nShapeCollector testing:\n\n";
+
+	ShapeCollector collector;
+	collector.add(shapes[0]);
+	collector.addAll(shapes);
+	cout << "\nA list:\n\n";
+	for (int i = 0; i < collector.size(); i++)
+		cout << collector[i]->findArea() << endl;
+	cout << "\nP list:\n\n";
+	for (int i = 0; i < collector.size(); i++)
+		cout << collector[i]->findPerim() << endl;
+	cout << "\nmin A = " << collector.getMinAreaShape()->findArea() << endl;
+	cout << "max A = " << collector.getMaxAreaShape()->findArea() << endl;
+	cout << "min P = " << collector.getMinPerimeterShape()->findPerim() << endl;
+	cout << "max P = " << collector.getMaxPerimeterShape()->findPerim() << endl;
+	cout << "\ntotal A = " << collector.getTotalArea() << endl;
+	cout << "total P = " << collector.getTotalPerimeter() << endl;
 
 	// LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3
 
-	Phonebook book;
+	/*Phonebook book;
 	book.add("Aaron", "+7464341743", 1);
 	cout << book.find("Aa");
 	book[0]->addNumber("234523", 2);
@@ -196,5 +214,5 @@ int main()
 	book.remove(1);
 	book.remove(2);
 	cout << "after removal:" << endl;
-	cout << book.find("46");
+	cout << book.find("46");*/
 }
