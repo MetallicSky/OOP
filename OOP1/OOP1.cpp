@@ -13,7 +13,8 @@ int main()
 {
 	// LAB1 LAB1 LAB1 LAB1 LAB1 LAB1 LAB1 LAB1 LAB1 LAB1 LAB1 LAB1
 
-	/*Matrix<int> test1(3, 2);
+	/*
+	Matrix<int> test1(3, 2);
 	cout << "\ntest1: without value constructor:" << endl;
 	cout << test1.toString();
 
@@ -23,6 +24,7 @@ int main()
 
 	Matrix<int> test2(2, 3, 4);
 	cout << "\ntest2: with value = 4 constructor:" << endl;
+	test2[0][0] = 1;
 	cout << test2.toString();
 
 	if (test1 == test2)
@@ -59,19 +61,20 @@ int main()
 	cout << "\ntest4: new 4X4 matrix after randomise(-10, 10):" << endl;
 	cout << test4.toString();
 	cout << "\ntest4 det = " << test4.determinant() << endl;
-	cout << endl;*/
+	cout << endl;
+	*/
 
-	// LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4 LAB2,4
+	// LAB2,4,5 LAB2,4,5 LAB2,4,5 LAB2,4,5 LAB2,4,5 LAB2,4,5 LAB2,4,5
 
 	vector<Shape*> shapes;
 	int minR = 0;
 	int maxR = 10;
 	for (int i = 0; i < 3; i++)
 	{
-		COORD center;
+		customCOORD center;
 		center.X = rand() % (maxR - minR + 1) + minR;
 		center.Y = rand() % (maxR - minR + 1) + minR;
-		COORD radius = center;
+		customCOORD radius = center;
 		while (radius.X == center.X && radius.Y == center.Y)
 		{
 			radius.X = rand() % (maxR - minR + 1) + minR;
@@ -82,10 +85,10 @@ int main()
 	}
 	for (int i = 0; i < 3; i++)
 	{
-		COORD p1;
+		customCOORD p1;
 		p1.X = rand() % (maxR - minR + 1) + minR;
 		p1.Y = rand() % (maxR - minR + 1) + minR;
-		COORD p2 = p1;
+		customCOORD p2 = p1;
 		while (p2.X == p1.X && p2.Y == p1.Y)
 		{
 			p2.X = rand() % (maxR - minR + 1) + minR;
@@ -96,10 +99,10 @@ int main()
 	}
 	for (int i = 0; i < 3; i++)
 	{
-		COORD bottomLeft;
+		customCOORD bottomLeft;
 		bottomLeft.X = rand() % (maxR - minR + 1) + minR;
 		bottomLeft.Y = rand() % (maxR - minR + 1) + minR;
-		COORD topRight = bottomLeft;
+		customCOORD topRight = bottomLeft;
 		while (topRight.X == bottomLeft.X && topRight.Y == bottomLeft.Y)
 		{
 			topRight.X = rand() % (maxR - minR + 1) + minR;
@@ -110,16 +113,16 @@ int main()
 	}
 	for (int i = 0; i < 3; i++)
 	{
-		COORD p1;
+		customCOORD p1;
 		p1.X = rand() % (maxR - minR + 1) + minR;
 		p1.Y = rand() % (maxR - minR + 1) + minR;
-		COORD p2 = p1;
+		customCOORD p2 = p1;
 		while (p1.X == p2.X && p1.Y == p2.Y)
 		{
 			p2.X = rand() % (maxR - minR + 1) + minR;
 			p2.Y = rand() % (maxR - minR + 1) + minR;
 		}
-		COORD p3 = p1;
+		customCOORD p3 = p1;
 		while (p1.X == p3.X && p1.Y == p3.Y || (p2.X == p3.X && p2.Y == p3.Y))
 		{
 			p3.X = rand() % (maxR - minR + 1) + minR;
@@ -194,25 +197,47 @@ int main()
 	cout << "\ntotal A = " << collector.getTotalArea() << endl;
 	cout << "total P = " << collector.getTotalPerimeter() << endl;
 
-	// LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3
+	collector.parse("out.txt");
 
-	/*Phonebook book;
-	book.add("Aaron", "+7464341743", 1);
-	cout << book.find("Aa");
-	book[0]->addNumber("234523", 2);
-	book[0]->removeNumber("+7464341743");
-	cout << "added new number, removed the old one:" << endl;
+	cout << "\n\nBACKUP TEST:\n\n";
 
-	cout << book.find("Aa");
+	{
+		ShapeCollector testUnparse;
+		testUnparse.unparse("out.txt");
 
-	book.add("Aalan", "484613", 2);
-	book.add("Ben");
-	book.add("Joseph", "*548#", 0);
-	book.add("Joe", "+746434234");
-	cout << "search: 46:" << endl;
-	cout << book.find("46");
-	book.remove(1);
-	book.remove(2);
-	cout << "after removal:" << endl;
-	cout << book.find("46");*/
+		cout << "\nA list:\n\n";
+		for (int i = 0; i < testUnparse.size(); i++)
+			cout << testUnparse[i]->findArea() << endl;
+		cout << "\nP list:\n\n";
+		for (int i = 0; i < testUnparse.size(); i++)
+			cout << testUnparse[i]->findPerim() << endl;
+		cout << "\nmin A = " << testUnparse.getMinAreaShape()->findArea() << endl;
+		cout << "max A = " << testUnparse.getMaxAreaShape()->findArea() << endl;
+		cout << "min P = " << testUnparse.getMinPerimeterShape()->findPerim() << endl;
+		cout << "max P = " << testUnparse.getMaxPerimeterShape()->findPerim() << endl;
+		cout << "\ntotal A = " << testUnparse.getTotalArea() << endl;
+		cout << "total P = " << testUnparse.getTotalPerimeter() << endl;
+	}
 }
+
+// LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3 LAB3
+
+/*Phonebook book;
+book.add("Aaron", "+7464341743", 1);
+cout << book.find("Aa");
+book[0]->addNumber("234523", 2);
+book[0]->removeNumber("+7464341743");
+cout << "added new number, removed the old one:" << endl;
+
+cout << book.find("Aa");
+
+book.add("Aalan", "484613", 2);
+book.add("Ben");
+book.add("Joseph", "*548#", 0);
+book.add("Joe", "+746434234");
+cout << "search: 46:" << endl;
+cout << book.find("46");
+book.remove(1);
+book.remove(2);
+cout << "after removal:" << endl;
+cout << book.find("46");*/

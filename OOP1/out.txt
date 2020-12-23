@@ -1,0 +1,192 @@
+{
+    "circle": {
+        "radius": "8.06225777",
+        "points_arr": [
+            [
+                "8",
+                "9"
+            ],
+            [
+                "9",
+                "1"
+            ]
+        ]
+    },
+    "circle": {
+        "radius": "8.06225777",
+        "points_arr": [
+            [
+                "8",
+                "9"
+            ],
+            [
+                "9",
+                "1"
+            ]
+        ]
+    },
+    "circle": {
+        "radius": "5.38516474",
+        "points_arr": [
+            [
+                "7",
+                "5"
+            ],
+            [
+                "5",
+                "10"
+            ]
+        ]
+    },
+    "circle": {
+        "radius": "9.21954441",
+        "points_arr": [
+            [
+                "1",
+                "0"
+            ],
+            [
+                "7",
+                "7"
+            ]
+        ]
+    },
+    "square": {
+        "edge_len": "1",
+        "points_arr": [
+            [
+                "5",
+                "8"
+            ],
+            [
+                "6",
+                "9"
+            ]
+        ]
+    },
+    "square": {
+        "edge_len": "2",
+        "points_arr": [
+            [
+                "7",
+                "3"
+            ],
+            [
+                "9",
+                "5"
+            ]
+        ]
+    },
+    "square": {
+        "edge_len": "5",
+        "points_arr": [
+            [
+                "2",
+                "7"
+            ],
+            [
+                "7",
+                "12"
+            ]
+        ]
+    },
+    "rectangle": {
+        "first_edge_len": "2",
+        "second_edge_len": "3",
+        "points_arr": [
+            [
+                "8",
+                "10"
+            ],
+            [
+                "6",
+                "7"
+            ]
+        ]
+    },
+    "rectangle": {
+        "first_edge_len": "2",
+        "second_edge_len": "2",
+        "points_arr": [
+            [
+                "8",
+                "5"
+            ],
+            [
+                "6",
+                "7"
+            ]
+        ]
+    },
+    "rectangle": {
+        "first_edge_len": "7",
+        "second_edge_len": "9",
+        "points_arr": [
+            [
+                "2",
+                "1"
+            ],
+            [
+                "9",
+                "10"
+            ]
+        ]
+    },
+    "triangle": {
+        "FirstSecond": "9.21954441",
+        "FirstThird": "5",
+        "SecondThird": "4.2426405",
+        "points_arr": [
+            [
+                "10",
+                "2"
+            ],
+            [
+                "4",
+                "9"
+            ],
+            [
+                "7",
+                "5"
+            ]
+        ]
+    },
+    "triangle": {
+        "FirstSecond": "1.41421354",
+        "FirstThird": "6.3245554",
+        "SecondThird": "7.6157732",
+        "points_arr": [
+            [
+                "4",
+                "7"
+            ],
+            [
+                "5",
+                "6"
+            ],
+            [
+                "7",
+                "0"
+            ]
+        ]
+    },
+    "triangle": {
+        "FirstSecond": "4",
+        "FirstThird": "3",
+        "SecondThird": "1",
+        "points_arr": [
+            [
+                "5",
+                "0"
+            ],
+            [
+                "5",
+                "4"
+            ],
+            [
+                "5",
+                "1"
+            ]
+        ]
+    }
+}
