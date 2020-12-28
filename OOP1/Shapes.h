@@ -8,12 +8,18 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-namespace pt = boost::property_tree;
-using customCOORD = struct customCOORD { float X; float Y; };
+
+#include <nlohmann/json.hpp>
+
+struct customCOORD
+{
+	float X;
+	float Y;
+};
+
 const double PI = 3.141592653589793238463;
 
+using namespace nlohmann;
 using namespace std;
 
 float getLength(customCOORD A, customCOORD B)
@@ -21,380 +27,454 @@ float getLength(customCOORD A, customCOORD B)
 	return sqrt(pow((A.X - B.X), 2) + pow((A.Y - B.Y), 2));
 }
 
-class Shape
+namespace shapes
 {
-protected:
+	enum shapeType
+	{
+		CircleT = 0,
+		SquareT = 1,
+		RectT = 2,
+		TriangleT = 3
+	};
 
-	void parse_points(pt::ptree* obj, std::vector<customCOORD>& arr) {
-		pt::ptree all_arr;
-		for (auto i = 0; i < arr.size(); ++i) {
-			pt::ptree points_arr;
-			for (auto j = 0; j < 2; ++j) {
-				pt::ptree point_arr;
-				j == 0 ? point_arr.put_value(arr[i].X) : point_arr.put_value(arr[i].Y);
-				points_arr.push_back(std::make_pair("", point_arr));
-			}
-			all_arr.push_back(std::make_pair("", points_arr));
+	class Shape
+	{
+	protected:
+
+		vector<customCOORD> dots;
+
+	public:
+		virtual float findArea()
+		{
+			return 0;
 		}
-		obj->add_child("points_arr", all_arr);
-	}
 
-	void unparse_points(pt::ptree* obj, std::vector<customCOORD>& arr) {
-		auto i = 0, j = 0;
-		for (pt::ptree::value_type& point : obj->get_child("points_arr")) {
-			customCOORD c1;
-			for (pt::ptree::value_type& dot : point.second) {
-				j == 0 ? c1.X = dot.second.get_value<double>() : c1.Y = dot.second.get_value<double>();
-				++j;
+		/// <summary>
+		/// Вычисляет периметр фигуры
+		/// </summary>
+		/// <returns></returns>
+		virtual float findPerim()
+		{
+			return 0;
+		}
+
+		/// <summary>
+		/// Выводит координаты образующих фигуру точек в виде (X; Y)\n
+		/// </summary>
+		/// <returns></returns>
+		string toString()
+		{
+			string str;
+			for (int i = 0; i < dots.size(); i++)
+			{
+				str += "(";
+				str += to_string(dots[i].X);
+				str += "; ";
+				str += to_string(dots[i].Y);
+				str += ")\n";
 			}
-			arr.push_back(c1);
-			j = 0;
-			++i;
+			return str;
+		}
+
+		/// <summary>
+		/// Выводит вектор c координатами
+		/// </summary>
+		/// <returns></returns>
+		virtual vector<float> getCoords() = 0;
+
+		/// <summary>
+		/// нужно для конвертации
+		/// </summary>
+		/// <returns></returns>
+		// virtual string convertToJson() = 0;
+
+		/// <summary>
+		/// Возвращает тип фигуры
+		/// </summary>
+		/// <returns></returns>
+		virtual shapeType getType() = 0;
+	};
+
+	class Circle : public Shape
+	{
+		float radius;
+	public:
+		Circle() = default;
+		Circle(customCOORD center, customCOORD rad)
+		{
+			dots = { center, rad };
+			radius = getLength(dots[0], dots[1]);
+		}
+
+		float findArea() override
+		{
+			return PI * pow(radius, 2);
+		}
+
+		float findPerim() override
+		{
+			return 2 * PI * radius;
+		}
+
+		virtual vector<float> getCoords() override
+		{
+			return vector<float>
+			{
+				dots[0].X,
+					dots[0].Y,
+					dots[1].X,
+					dots[1].Y
+			};
+		}
+		shapeType virtual getType() override
+		{
+			return shapeType::CircleT;
+		}
+		/*string virtual convertToJson()
+		{
+			return "Circledots[0].X:" + to_string(dots[0].X) + ",Circledots[0].Y:" + to_string(dots[0].Y) + ",Circledots[1].X:" + to_string(dots[1].X) + ",Circledots[1].Y:" + to_string(dots[1].Y) + ",";
+		}*/
+	};
+
+	class Square : public Shape
+	{
+		float a;
+
+	public:
+		Square() = default;
+		Square(customCOORD bottomLeft, customCOORD topRight)
+		{
+			dots = { bottomLeft, topRight };
+			a = abs(dots[1].X - dots[0].X);
+		}
+
+		float findArea() override
+		{
+			return pow(a, 2);
+		}
+
+		float findPerim() override
+		{
+			return 4 * a;
+		}
+
+		vector<float> getCoords() override
+		{
+			return vector<float>
+			{
+				dots[0].X,
+					dots[0].Y,
+					dots[1].X,
+					dots[1].Y
+			};
+		}
+		shapeType getType() override
+		{
+			return shapeType::SquareT;
+		}
+		/*string convertToJson()
+		{
+			return "Squaredots[0].X:" + to_string(dots[0].X) + ",Squaredots[0].Y:" + to_string(dots[0].Y) + ",Squaredots[1].X:" + to_string(dots[1].X) + ",Squaredots[1].Y:" + to_string(dots[1].Y) + ",";
+		}*/
+	};
+
+	class Rect : public Shape
+	{
+		float a;
+		float b;
+	public:
+		Rect() = default;
+		Rect(customCOORD bottomLeft, customCOORD topRight)
+		{
+			dots = { bottomLeft, topRight };
+			a = abs(dots[1].X - dots[0].X);
+			b = abs(dots[1].Y - dots[0].Y);
+		}
+
+		float findArea() override
+		{
+			return a * b;
+		}
+
+		float findPerim() override
+		{
+			return 2 * (a + b);
+		}
+
+		vector<float> getCoords() override
+		{
+			return vector<float>
+			{
+				dots[0].X,
+					dots[0].Y,
+					dots[1].X,
+					dots[1].Y
+			};
+		}
+		shapeType getType() override
+		{
+			return shapeType::RectT;
+		}
+		/*string convertToJson()
+		{
+			return "Rectdots[0].X:" + to_string(dots[0].X) + ",Rectdots[0].Y:" + to_string(dots[0].Y) + ",Rectdots[1].X:" + to_string(dots[1].X) + ",Rectdots[1].Y:" + to_string(dots[1].Y) + ",";
+		}*/
+	};
+
+	class Triangle : public Shape
+	{
+		float a;
+		float b;
+		float c;
+
+	public:
+		Triangle() = default;
+		Triangle(customCOORD p1, customCOORD p2, customCOORD p3)
+		{
+			dots = { p1, p2, p3 };
+			a = getLength(dots[0], dots[1]);
+			b = getLength(dots[1], dots[2]);
+			c = getLength(dots[2], dots[0]);
+		}
+
+		float findArea() override
+		{
+			float p = findPerim() / 2;
+			return sqrt(p * (p - a) * (p - b) * (p - c));
+		}
+
+		float findPerim() override
+		{
+			return a + b + c;
+		}
+
+		vector<float> getCoords() override
+		{
+			return vector<float>
+			{
+				dots[0].X,
+					dots[0].Y,
+					dots[1].X,
+					dots[1].Y,
+					dots[2].X,
+					dots[2].Y
+			};
+		}
+		shapeType getType() override
+		{
+			return shapeType::RectT;
+		}
+		/*string convertToJson()
+		{
+			return "Triangledots[0].X:" + to_string(dots[0].X) + ",Triangledots[0].Y:" + to_string(dots[0].Y) + ",Triangledots[1].X:" + to_string(dots[1].X) + ",Triangledots[1].Y:" + to_string(dots[1].Y) + ",";
+		}*/
+	};
+
+	class ShapeCollector
+	{
+		vector<Shape*> shapes;
+
+		float totalArea;
+		float totalPerimeter;
+
+	public:
+		ShapeCollector()
+		{
+			totalArea = 0;
+			totalPerimeter = 0;
+		}
+
+		void add(Shape* shape)
+		{
+			shapes.push_back(shape);
+			totalArea += shape->findArea();
+			totalPerimeter += shape->findPerim();
+		}
+
+		void addAll(vector<Shape*> adding)
+		{
+			for (int i = 0; i < adding.size(); i++)
+				add(adding[i]);
+		}
+
+		Shape* getMaxAreaShape()
+		{
+			Shape* maxAreaShape;
+			if (shapes.size() > 0)
+				maxAreaShape = shapes[0];
+			else
+				return nullptr;
+
+			for (int i = 0; i < shapes.size(); i++)
+				if (shapes[i]->findArea() > maxAreaShape->findArea())
+					maxAreaShape = shapes[i];
+
+			return maxAreaShape;
+		}
+
+		Shape* getMinAreaShape()
+		{
+			Shape* minAreaShape;
+			if (shapes.size() > 0)
+				minAreaShape = shapes[0];
+			else
+				return nullptr;
+
+			for (int i = 0; i < shapes.size(); i++)
+				if (shapes[i]->findArea() < minAreaShape->findArea())
+					minAreaShape = shapes[i];
+
+			return minAreaShape;
+		}
+
+		Shape* getMaxPerimeterShape()
+		{
+			Shape* maxPerimeterShape;
+			if (shapes.size() > 0)
+				maxPerimeterShape = shapes[0];
+			else
+				return nullptr;
+
+			for (int i = 0; i < shapes.size(); i++)
+				if (shapes[i]->findArea() > maxPerimeterShape->findPerim())
+					maxPerimeterShape = shapes[i];
+
+			return maxPerimeterShape;
+		}
+
+		Shape* getMinPerimeterShape()
+		{
+			Shape* minPerimeterShape;
+			if (shapes.size() > 0)
+				minPerimeterShape = shapes[0];
+			else
+				return nullptr;
+
+			for (int i = 0; i < shapes.size(); i++)
+				if (shapes[i]->findArea() < minPerimeterShape->findPerim())
+					minPerimeterShape = shapes[i];
+
+			return minPerimeterShape;
+		}
+
+		float getTotalArea()
+		{
+			return totalArea;
+		}
+
+		float getTotalPerimeter()
+		{
+			return totalPerimeter;
+		}
+
+		int size()
+		{
+			return shapes.size();
+		}
+
+		Shape* operator [] (int i)
+		{
+			return shapes[i];
 		}
 	};
-	vector<customCOORD> dots;
-public:
-	virtual void parse(pt::ptree* obj) = 0;
-	virtual void unparse(pt::ptree* obj) = 0;
-	virtual float findArea()
-	{
-		return 0;
-	}
 
-	/// <summary>
-	/// Вычисляет периметр фигуры
-	/// </summary>
-	/// <returns></returns>
-	virtual float findPerim()
+	void parse(vector<Shape*> shapes)
 	{
-		return 0;
-	}
-
-	/// <summary>
-	/// Выводит координаты образующих фигуру точек в виде (X; Y)\n
-	/// </summary>
-	/// <returns></returns>
-	string toString()
-	{
-		string str;
-		for (int i = 0; i < dots.size(); i++)
+		ofstream ostream;
+		ostream.open("out.json");
+		if (!ostream.is_open())
 		{
-			str += "(";
-			str += to_string(dots[i].X);
-			str += "; ";
-			str += to_string(dots[i].Y);
-			str += ")\n";
+			ofstream ostream("out.json");
+			ostream.open("out.json");
 		}
-		return str;
-	}
-};
 
-class Circle : public Shape
-{
-	float radius;
-public:
-	Circle() = default;
-	Circle(customCOORD center, customCOORD rad)
+		json jsonStream;
+		jsonStream["vector"] = {};
+		for (auto i = shapes.cbegin(); i != shapes.cend(); i++)
+			jsonStream["vector"].push_back({ (*i)->getType(), (*i)->getCoords() });
+		ostream << jsonStream;
+	}
+
+	vector<Shape*> unparse()
 	{
-		dots = { center, rad };
-		radius = getLength(dots[0], dots[1]);
-	}
+		vector<Shape*> shapes;
+		ifstream istream;
+		istream.open("out.json");
 
-	float findArea() override
-	{
-		return PI * pow(radius, 2);
-	}
+		json jsonStream;
+		istream >> jsonStream;
+		for (auto element : jsonStream["vector"])
+		{
+			shapeType figure = *element.begin();
+			switch (figure)
+			{
+			case shapeType::CircleT:
+			{
+				vector<float> parameters = (element.end() - 1)->get<vector<float>>();
 
-	float findPerim() override
-	{
-		return 2 * PI * radius;
-	}
-	void unparse(pt::ptree* obj) override {
-		this->radius = obj->get<double>("radius");
-		unparse_points(obj, this->dots);
-	}
-	void parse(pt::ptree* obj) override {
-		pt::ptree circle_info;
-		circle_info.put("radius", radius);
-		parse_points(&circle_info, dots);
-		obj->add_child("circle", circle_info);
-	}
-};
+				customCOORD c1;
+				c1.X = parameters[0];
+				c1.Y = parameters[1];
 
-class Square : public Shape
-{
-	float a;
+				customCOORD c2;
+				c2.X = parameters[2];
+				c2.Y = parameters[3];
 
-public:
-	Square() = default;
-	Square(customCOORD bottomLeft, customCOORD topRight)
-	{
-		dots = { bottomLeft, topRight };
-		a = abs(dots[1].X - dots[0].X);
-	}
-
-	float findArea() override
-	{
-		return pow(a, 2);
-	}
-
-	float findPerim() override
-	{
-		return 4 * a;
-	}
-	void parse(pt::ptree* obj) override {
-		pt::ptree square_info;
-		pt::ptree all_arr;
-		square_info.put("edge_len", a);
-		parse_points(&square_info, dots);
-		obj->add_child("square", square_info);
-	}
-	void unparse(pt::ptree* obj) override {
-		this->a = obj->get<double>("edge_len");
-		unparse_points(obj, this->dots);
-	}
-};
-
-class Rect : public Shape
-{
-	float a;
-	float b;
-public:
-	Rect() = default;
-	Rect(customCOORD bottomLeft, customCOORD topRight)
-	{
-		dots = { bottomLeft, topRight };
-		a = abs(dots[1].X - dots[0].X);
-		b = abs(dots[1].Y - dots[0].Y);
-	}
-
-	float findArea() override
-	{
-		return a * b;
-	}
-
-	float findPerim() override
-	{
-		return 2 * (a + b);
-	}
-	void parse(pt::ptree* obj) override {
-		pt::ptree rectanlge_info;
-		rectanlge_info.put("first_edge_len", a);
-		rectanlge_info.put("second_edge_len", b);
-		parse_points(&rectanlge_info, dots);
-		obj->add_child("rectangle", rectanlge_info);
-	}
-	void unparse(pt::ptree* obj) override {
-		this->a = obj->get<double>("first_edge_len");
-		this->b = obj->get<double>("second_edge_len");
-		unparse_points(obj, this->dots);
-	}
-};
-
-class Triangle : public Shape
-{
-	float a;
-	float b;
-	float c;
-
-public:
-	Triangle() = default;
-	Triangle(customCOORD p1, customCOORD p2, customCOORD p3)
-	{
-		dots = { p1, p2, p3 };
-		a = getLength(dots[0], dots[1]);
-		b = getLength(dots[1], dots[2]);
-		c = getLength(dots[2], dots[0]);
-	}
-
-	float findArea() override
-	{
-		float p = findPerim() / 2;
-		return sqrt(p * (p - a) * (p - b) * (p - c));
-	}
-
-	float findPerim() override
-	{
-		return a + b + c;
-	}
-	void parse(pt::ptree* obj)  override {
-		pt::ptree triangle_info;
-		triangle_info.put("FirstSecond", a);
-		triangle_info.put("FirstThird", b);
-		triangle_info.put("SecondThird", c);
-		parse_points(&triangle_info, dots);
-		obj->add_child("triangle", triangle_info);
-	}
-	void unparse(pt::ptree* obj) override {
-		this->a = obj->get<double>("FirstSecond");
-		this->b = obj->get<double>("FirstThird");
-		this->c = obj->get<double>("SecondThird");
-		unparse_points(obj, this->dots);
-	}
-};
-
-class ShapeCollector
-{
-	vector<Shape*> shapes;
-
-	float totalArea;
-	float totalPerimeter;
-
-public:
-	ShapeCollector()
-	{
-		totalArea = 0;
-		totalPerimeter = 0;
-	}
-
-	void add(Shape* shape)
-	{
-		shapes.push_back(shape);
-		totalArea += shape->findArea();
-		totalPerimeter += shape->findPerim();
-	}
-
-	void addAll(vector<Shape*> adding)
-	{
-		for (int i = 0; i < adding.size(); i++)
-			add(adding[i]);
-	}
-
-	Shape* getMaxAreaShape()
-	{
-		Shape* maxAreaShape;
-		if (shapes.size() > 0)
-			maxAreaShape = shapes[0];
-		else
-			return nullptr;
-
-		for (int i = 0; i < shapes.size(); i++)
-			if (shapes[i]->findArea() > maxAreaShape->findArea())
-				maxAreaShape = shapes[i];
-
-		return maxAreaShape;
-	}
-
-	Shape* getMinAreaShape()
-	{
-		Shape* minAreaShape;
-		if (shapes.size() > 0)
-			minAreaShape = shapes[0];
-		else
-			return nullptr;
-
-		for (int i = 0; i < shapes.size(); i++)
-			if (shapes[i]->findArea() < minAreaShape->findArea())
-				minAreaShape = shapes[i];
-
-		return minAreaShape;
-	}
-
-	Shape* getMaxPerimeterShape()
-	{
-		Shape* maxPerimeterShape;
-		if (shapes.size() > 0)
-			maxPerimeterShape = shapes[0];
-		else
-			return nullptr;
-
-		for (int i = 0; i < shapes.size(); i++)
-			if (shapes[i]->findArea() > maxPerimeterShape->findPerim())
-				maxPerimeterShape = shapes[i];
-
-		return maxPerimeterShape;
-	}
-
-	Shape* getMinPerimeterShape()
-	{
-		Shape* minPerimeterShape;
-		if (shapes.size() > 0)
-			minPerimeterShape = shapes[0];
-		else
-			return nullptr;
-
-		for (int i = 0; i < shapes.size(); i++)
-			if (shapes[i]->findArea() < minPerimeterShape->findPerim())
-				minPerimeterShape = shapes[i];
-
-		return minPerimeterShape;
-	}
-
-	float getTotalArea()
-	{
-		return totalArea;
-	}
-
-	float getTotalPerimeter()
-	{
-		return totalPerimeter;
-	}
-
-	int size()
-	{
-		return shapes.size();
-	}
-
-	Shape* operator [] (int i)
-	{
-		return shapes[i];
-	}
-	void parse(std::string file_name) {
-		std::fstream file;
-		file.open(file_name, std::ios_base::out);
-		if (file.fail()) {
-			throw std::invalid_argument("Can't open file");
-		}
-		pt::ptree json_obj;
-		for (auto i : shapes) {
-			i->parse(&json_obj);
-		}
-		pt::write_json(file, json_obj);
-	}
-
-	void unparse(std::string file_name) {
-		std::fstream file;
-		file.open(file_name, std::ios_base::in);
-		if (file.fail()) {
-			throw std::invalid_argument("Can't open file");
-		}
-		pt::ptree objects;
-		pt::read_json(file, objects);
-		if (objects.empty()) {
-			throw std::invalid_argument("Incorrect JSON structure");
-		}
-		for (pt::ptree::const_iterator iter = objects.begin(); iter != objects.end(); ++iter) {
-			if (iter->first == "circle") {
-				Circle* circle(new Circle);
-				pt::ptree a;
-				a = iter->second;
-				circle->unparse(&a);
-				this->add(circle);
+				shapes.push_back(new Circle(c1, c2));
+				break;
 			}
-			else if (iter->first == "triangle") {
-				Triangle* triangle(new Triangle);
-				pt::ptree a;
-				a = iter->second;
-				triangle->unparse(&a);
-				this->add(triangle);
+			case shapeType::SquareT:
+			{
+				vector<float> parameters = (element.end() - 1)->get<vector<float>>();
+
+				customCOORD c1;
+				c1.X = parameters[0];
+				c1.Y = parameters[1];
+
+				customCOORD c2;
+				c2.X = parameters[2];
+				c2.Y = parameters[3];
+
+				shapes.push_back(new Square(c1, c2));
+				break;
 			}
-			else if (iter->first == "rectangle") {
-				Rect* rectangle(new Rect);
-				pt::ptree a;
-				a = iter->second;
-				rectangle->unparse(&a);
-				this->add(rectangle);
+			case shapeType::RectT:
+			{
+				vector<float> parameters = (element.end() - 1)->get<vector<float>>();
+
+				customCOORD c1;
+				c1.X = parameters[0];
+				c1.Y = parameters[1];
+
+				customCOORD c2;
+				c2.X = parameters[2];
+				c2.Y = parameters[3];
+
+				shapes.push_back(new Rect(c1, c2));
+				break;
 			}
-			else if (iter->first == "square") {
-				Square* square(new Square);
-				pt::ptree a;
-				a = iter->second;
-				square->unparse(&a);
-				this->add(square);
+			case shapeType::TriangleT:
+			{
+				vector<float> parameters = (element.end() - 1)->get<vector<float>>();
+
+				customCOORD c1;
+				c1.X = parameters[0];
+				c1.Y = parameters[1];
+
+				customCOORD c2;
+				c2.X = parameters[2];
+				c2.Y = parameters[3];
+
+				customCOORD c3;
+				c3.X = parameters[2];
+				c3.Y = parameters[3];
+
+				shapes.push_back(new Triangle(c1, c2, c3));
+				break;
 			}
-			else {
-				throw std::invalid_argument("Invalid figure");
 			}
 		}
+
+		return shapes;
 	}
-};
+}

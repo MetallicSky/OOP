@@ -7,6 +7,7 @@
 #include <conio.h>
 #include <vector>
 
+using namespace shapes;
 using namespace std;
 
 int main()
@@ -197,26 +198,13 @@ int main()
 	cout << "\ntotal A = " << collector.getTotalArea() << endl;
 	cout << "total P = " << collector.getTotalPerimeter() << endl;
 
-	collector.parse("out.txt");
+	parse(shapes);
 
 	cout << "\n\nBACKUP TEST:\n\n";
 
 	{
-		ShapeCollector testUnparse;
-		testUnparse.unparse("out.txt");
-
-		cout << "\nA list:\n\n";
-		for (int i = 0; i < testUnparse.size(); i++)
-			cout << testUnparse[i]->findArea() << endl;
-		cout << "\nP list:\n\n";
-		for (int i = 0; i < testUnparse.size(); i++)
-			cout << testUnparse[i]->findPerim() << endl;
-		cout << "\nmin A = " << testUnparse.getMinAreaShape()->findArea() << endl;
-		cout << "max A = " << testUnparse.getMaxAreaShape()->findArea() << endl;
-		cout << "min P = " << testUnparse.getMinPerimeterShape()->findPerim() << endl;
-		cout << "max P = " << testUnparse.getMaxPerimeterShape()->findPerim() << endl;
-		cout << "\ntotal A = " << testUnparse.getTotalArea() << endl;
-		cout << "total P = " << testUnparse.getTotalPerimeter() << endl;
+		vector<Shape*> newShapes = unparse();
+		// you can use breakpoint to see what newShapes contains;
 	}
 }
 
