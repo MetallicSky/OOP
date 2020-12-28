@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/img"/>
+    <qresource prefix="/">
+        <file>D:/Users/user/Downloads/Triangle.png</file>
+        <file>D:/Users/user/Downloads/Rectangle.png</file>
+        <file>D:/Users/user/Downloads/Square.png</file>
+        <file>D:/Users/user/Downloads/Circle.png</file>
+        <file>D:/Users/user/Downloads/dice.png</file>
+        <file>D:/Users/user/Downloads/trashBin.png</file>
+        <file>D:/Users/user/Downloads/arrowUp.png</file>
+        <file>D:/Users/user/Downloads/arrowDown.png</file>
+    </qresource>
+    <qresource prefix="/headers">
+        <file>Shapes.h</file>
+    </qresource>
+</RCC>
